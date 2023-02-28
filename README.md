@@ -1,6 +1,7 @@
 # DiscordMusicBot
 # Discord music player bot made with Discordjs
 ## Running the bot
+### add your own .env file after cloning the project and enter your own bot TOKEN inside it
 ### node index.js load to load updates to bot
 ### node index.js to run the bot
 ## Using the bot 
