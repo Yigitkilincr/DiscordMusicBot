@@ -1,5 +1,5 @@
 # DiscordMusicBot
-#Discord music player bot made with Discordjs
+# Discord music player bot made with Discordjs
 ## Running the bot
 ### node index.js load to load updates to bot
 ### node index.js to run the bot
