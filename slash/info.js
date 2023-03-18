@@ -4,11 +4,11 @@ const { EmbedBuilder } = require("discord.js")
 module.exports = {
 	data: new SlashCommandBuilder().setName("info").setDescription("Displays info about the currently playing song"),
 	run: async ({ client, interaction }) => {
-		const queue = client.player.getQueue(interaction.guildId)
+		const queue = client.player.nodes.get(interaction.guildId)
 
 		if (!queue) return await interaction.editReply("There are no songs in the queue")
 
-		let bar = queue.createProgressBar({
+		let bar = queue.node.createProgressBar({
 			queue: false,
 			length: 19,
 		})

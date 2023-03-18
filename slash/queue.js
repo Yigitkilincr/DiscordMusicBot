@@ -8,8 +8,9 @@ module.exports = {
     .addNumberOption((option) => option.setName("page").setDescription("Page number of the queue").setMinValue(1)),
 
     run: async ({ client, interaction }) => {
-        const queue = client.player.getQueue(interaction.guildId)
-        if (!queue || !queue.playing){
+        const queue = client.player.nodes.get(interaction.guildId);
+        console.log(queue.tracks);
+        if (!queue || !queue.node.isPlaying()){
             return await interaction.editReply("There are no songs in the queue")
         }
 
@@ -19,11 +20,12 @@ module.exports = {
         if (page > totalPages) 
             return await interaction.editReply(`Invalid Page. There are only a total of ${totalPages} pages of songs`)
         
-        const queueString = queue.tracks.slice(page * 10, page * 10 + 10).map((song, i) => {
+        const queueArray = Array.from(queue.tracks);
+        const queueString = queueArray.slice(page * 10, page * 10 + 10).map((song, i) => {
             return `**${page * 10 + i + 1}.** \`[${song.duration}]\` ${song.title} -- <@${song.requestedBy.id}>`
-        }).join("\n")
+        }).join("\n");
 
-        const currentSong = queue.current
+        const currentSong = queue.currentTrack;
 
         await interaction.editReply({
             embeds: [

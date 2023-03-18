@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
 const { EmbedBuilder } = require("discord.js")
-const { QueryType } = require("discord-player")
+const { Player,QueryType } = require("discord-player")
+
+const queues = {};
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,10 +27,23 @@ module.exports = {
 				.addStringOption((option) => option.setName("keywords").setDescription("the keywords for song").setRequired(true))
 		),
 	run: async ({ client, interaction }) => {
-		if (!interaction.member.voice.channel) return interaction.editReply("You need to be in a VC to use this command")
+        const player = new Player();
 
-		const queue = await client.player.createQueue(interaction.guild)
-		if (!queue.connection) await queue.connect(interaction.member.voice.channel)
+		if (!interaction.member.voice.channel){
+            return interaction.editReply("You need to be in a VC to use this command")
+        }
+
+        const guildId = interaction.guild.id; // ?
+        let queue = queues[guildId];
+
+        if (!queue) {
+            queue = player.nodes.create(interaction.guild)
+            queues[guildId] = queue;
+        }
+
+		if (!queue.connection){
+            await queue.connect(interaction.member.voice.channel);
+        } 
 
 		let embed = new EmbedBuilder()
 
@@ -81,7 +96,11 @@ module.exports = {
                 .setThumbnail(song.thumbnail)
                 .setFooter({ text: `Duration: ${song.duration}`})
 		}
-        if (!queue.playing) await queue.play()
+        if (!queue.node.isPlaying()){
+            queue.node.play();
+        }
+        else{
+        }
         await interaction.editReply({
             embeds: [embed]
         })
